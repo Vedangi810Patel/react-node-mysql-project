@@ -1,6 +1,6 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../configs/dbConfig');
-const profilepictureauthenticate = require('../middleware/ProfielMiddlewareAuthentication')
+const profilepictureauthenticate = require('../middleware/ImageMiddlewareAuthentication')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "user"
@@ -62,21 +62,21 @@ const LogIn = async (req, res) => {
     // console.log(req.body);
     try {
 
-        // if (!email || !password) {
-        //     return res.status(400).json({ error: "Missing required fields" });
-        // }
+        if (!email || !password) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
 
         const existingUser = await sequelize.query(
-            `SELECT email, password FROM users WHERE email = '${email}'`,
+            `SELECT user_id,email,password,profile_pic,user_role FROM users WHERE email = '${email}'`,
             { type: QueryTypes.SELECT }
         );
 
         console.log("existingUser:", existingUser);
 
-        // if (existingUser.length === 0) {
-        //     return res.status(400).json({ error: "Email not found" });
-        // }
+        if (existingUser.length === 0) {
+            return res.status(400).json({ error: "Email not found" });
+        }
 
         // console.log(password)
         const passwordMatch = await bcrypt.compare(
@@ -89,7 +89,12 @@ const LogIn = async (req, res) => {
         }
 
         if (passwordMatch) {
-            const token = jwt.sign({ email: existingUser[0].email }, SECRET_KEY);
+            const token = jwt.sign({
+                user_id : existingUser[0].user_id,
+                email: existingUser[0].email,
+                profilePicture : existingUser[0].profile_pic,
+                user_role : existingUser[0].user_role
+            }, SECRET_KEY);
             res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 });
             return res.status(200).json({
                 message: "Login successful",

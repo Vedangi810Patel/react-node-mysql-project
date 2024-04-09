@@ -1,121 +1,187 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require("../configs/dbConfig");
 
-const createBook = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
-        const { book_id, title, book_description, publish_year, quantity_available } = req.body;
+        const { product_name, product_description, price } = req.body;
+        const createdBy = req.user.user_id;
+        console.log(createdBy);
 
-        // Check if all required fields are present
-        if (!book_id || !title || !book_description || !publish_year || !quantity_available) {
+         // Check if all required fields are present
+        if (!category) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         // Check if email is already registered
-        const existingBook = await sequelize.query(
-            `SELECT title FROM books WHERE title = '${title}'`,
+        const existingCategory = await sequelize.query(
+            `SELECT category FROM categories WHERE category = '${category}'`,
             { type: QueryTypes.SELECT }
         );
 
-        if (existingBook.length > 0) {
-            return res.status(400).json({ error: "Book already exists" });
+        if (existingCategory.length > 0) {
+            return res.status(400).json({ error: "Category already exists" });
         }
 
         await sequelize.query(
-            `INSERT INTO books (book_id, title, book_description, publish_year, quantity_available) 
-            VALUES (${book_id}, '${title}', '${book_description}', ${publish_year}, ${quantity_available})`,
+            `INSERT INTO categories (category, created_by) 
+            VALUES ('${category}', ${createdBy})`,
             { type: QueryTypes.INSERT }
         );
-        res.status(200).json({ message: "Book Added successfully" });
+        res.status(200).json({ message: "Category Added successfully" });
     } catch (error) {
-        console.error("Error adding Book:", error);
+        console.error("Error adding Category:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
-const fetchAllBooks = async (req, res) => {
+const fetchAllProduct = async (req, res) => {
     try {
-        const users = await sequelize.query(
-            `SELECT * from books`, { type: QueryTypes.SELECT }
-        );
+        console.log("Fetch");
+        const createdBy = req.user.user_id;
+        const userRole = req.user.user_role;
+        let categoryData;
 
-        res.status(200).json(users);
+        if(userRole === 1) {
+            categoryData = await sequelize.query(
+                `SELECT * FROM categories`, 
+                { type: QueryTypes.SELECT }
+            );
+        } else {
+            categoryData = await sequelize.query(
+                `SELECT * from categories where created_by = ${createdBy}`,
+                {type: QueryTypes.SELECT}
+            );
+        }
+
+        // const category = await sequelize.query(
+        //     `SELECT * from categories`, { type: QueryTypes.SELECT }
+        // );
+
+        if(!categoryData.length) {
+            return res.status(404).json({
+                message: "No Category Found"
+            });
+        }
+
+        res.status(200).json(categoryData);
     } catch (err) {
         console.error("Unable to Fetch :", err);
     }
 };
 
 
-const getBookByTitle = async (req, res) => {
-    const { title } = req.body;
+const getProductByName = async (req, res) => {
+    const { category } = req.body;
     try {
-        const result = await sequelize.query(
-            `SELECT * FROM books WHERE title = '${title}'`, { type: QueryTypes.SELECT }
-        );
-        res.status(200).json({
-            data: result,
-        });
+    //     const result = await sequelize.query(
+    //         `SELECT * FROM categories WHERE category = '${category}'`, { type: QueryTypes.SELECT }
+    //     );
+    //     res.status(200).json(result);
+    // } catch (error) {
+    //     console.log("Error Detected", error);
+    // }
+        const createdBy = req.user.user_id;
+        const userRole = req.user.user_role;
+        let categoryData;
+
+        if(userRole === 1) {
+            categoryData = await sequelize.query(
+                `SELECT * FROM categories where category = '${category}'`, 
+                { type: QueryTypes.SELECT }
+            );
+        } else {
+            categoryData = await sequelize.query(
+                `SELECT * from categories where created_by = ${createdBy} and category = '${category}'`,
+                {type: QueryTypes.SELECT}
+            );
+        }
+        if(categoryData.length === 0) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+        res.status(200).json(categoryData);
     } catch (error) {
         console.log("Error Detected", error);
     }
 };
 
 
-const updateBook = async (req, res) => {
-    const {
-        book_id,
-        title,
-        book_description,
-        publish_year,
-        quantity_available,
-    } = req.body;
+const updateProduct = async (req, res) => {
+    const { category_id, categoryName } = req.body;
+    const createdBy = req.user.user_id;
+    const userRole = req.user.user_role;
 
-    if (!book_id || !title || !book_description || !publish_year || !quantity_available) {
+    if (!category_id || !categoryName ) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
+
+        const category = await sequelize.query(
+            `SELECT * FROM categories WHERE category_id = ${category_id}`,
+            { type: QueryTypes.SELECT }
+        );
+
+        if (category.length === 0) {
+            return res.status(404).json({ message: "Category not found" });
+        }
+
+        if (userRole !== 1 && category[0].created_By !== createdBy) {
+            return res.status(403).json({ message: "Not Authorized" });
+        }
+
         await sequelize.query(
-            `UPDATE books SET 
-            book_id = ${book_id},
-            title = '${title}',
-            book_description = '${book_description}',
-            publish_year = '${publish_year}',
-            quantity_available = '${quantity_available}' 
-            WHERE book_id = ${book_id}`,
+            `UPDATE categories SET 
+            category = '${categoryName}'
+            WHERE category_id = ${category_id}`,
             { type: QueryTypes.UPDATE }
         );
-        res.status(200).json({ message: "Book updated successfully" });
+        res.status(200).json({ message: "Category updated successfully" });
         // res.status(200).json(res.send("Book Updated Sucessfully !"));
     } catch (error) {
-        console.error("Error adding user:", error);
+        console.error("Error Uupdating Category:", error);
     }
 };
 
-const deleteBook = async (req, res) => {
-    const { book_id } = req.body;
+const deleteProduct = async (req, res) => {
+    const { category_id } = req.body;
+    const createdBy = req.user.user_id;
+    const userRole = req.user.user_role;
+    // const { book_id } = req.body;
 
     try {
-        const result = await sequelize.query(
-            `DELETE FROM books WHERE book_id = ${book_id}`, { type: QueryTypes.UPDATE }
+        const category = await sequelize.query(
+            `SELECT * FROM categories WHERE category_id = ${category_id}`,
+            { type: QueryTypes.SELECT }
         );
 
-        if (result[1] === 0) {
+
+        if (category.length === 0) {
             return res.status(404).json({
-                error: "Book not found"
+                error: "Category not found"
             });
         }
-        res.status(200).json({ message: "Book deleted successfully" });
+
+        if (userRole !== 1 && category[0].created_By !== createdBy) {
+            return res.status(403).json({ message: "Not Authorized" });
+        }
+
+        await sequelize.query(
+            `DELETE FROM categories WHERE category_id = ${category_id}`,
+            { type: QueryTypes.DELETE }
+        );
+
+        res.status(200).json({ message: "Category deleted successfully" });
     } catch (error) {
-        console.error("Error deleting Book:", error);
+        console.error("Error deleting Category:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
 
 module.exports = {
-    createBook,
-    fetchAllBooks,
-    getBookByTitle,
-    updateBook,
-    deleteBook
+    createProduct,
+    fetchAllProduct,
+    getProductByName,
+    updateProduct,
+    deleteProduct
 }

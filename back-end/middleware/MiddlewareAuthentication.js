@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
         if (req.body.email && req.body.email !== sentEmail) {
         throw 'Indalid Employee with email !';
         } else {
+            req.user = decodedToken;
             next();
         }
     }   catch {

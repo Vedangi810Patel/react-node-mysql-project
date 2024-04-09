@@ -6,6 +6,7 @@ const Routes = express.Router();
 const UserController = require('../controllers/User_Controller');
 // const UserLogIn = require('../controllers/LogIn_Controller');
 const CategoryController = require('../controllers/Category_Controller');
+const ProductController = require('../controllers/Product_Controller');
 
 Routes.post('/Registration', UserController.Registration);
 
@@ -19,6 +20,17 @@ Routes.post('/CategoryByName', MiddlewareAuthentication, CategoryController.getC
 
 Routes.put('/UpdateCategory', MiddlewareAuthentication, CategoryController.updateCategory);
 
+Routes.post('/DeleteCategory', MiddlewareAuthentication, CategoryController.deleteCategory);
+
+Routes.post('/AddProduct', MiddlewareAuthentication, ProductController.createProduct);
+
+Routes.get('/AllProduct', MiddlewareAuthentication, ProductController.fetchAllProduct);
+
+Routes.post('/ProductByName', MiddlewareAuthentication, ProductController.getProductByName);
+
+Routes.put('/UpdateProduct', MiddlewareAuthentication, ProductController.updateProduct);
+
+Routes.post('/DeleteProduct', MiddlewareAuthentication, ProductController.deleteProduct);
 
 module.exports = {
     Routes
