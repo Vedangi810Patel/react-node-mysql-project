@@ -1,13 +1,13 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../configs/dbConfig');
-const profilepictureauthenticate = require('../middleware/ProfileMiddlewareAuthentication')
+const profilepictureauthenticate = require('../middleware/ProfielMiddlewareAuthentication')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "user"
 
 //Insert New User
 const Registration = async (req, res) => {
-    // console.log(req.body)
+    console.log(req.body);
     try {
         await profilepictureauthenticate(req, res, async (err) => {
             if (err) {
@@ -18,11 +18,11 @@ const Registration = async (req, res) => {
                 return res.status(400).json({ error: "Error: No File Selected!" });
             }
 
-            const { firstname, lastname, email, password, hobbies } = req.body;
-            const profile = req.file.filename;
+            const { firstname, lastname, email, password, gender, hobbies } = req.body;
+            const profilePicture = req.file.filename;
 
             // Check if all required fields are present
-            if (!firstname || !lastname || !email || !password || !profile || !hobbies) {
+            if (!firstname || !lastname || !email || !password || !profilePicture || !gender || !hobbies) {
                 return res.status(400).json({ error: "Missing required fields" });
             }
 
@@ -40,8 +40,8 @@ const Registration = async (req, res) => {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             await sequelize.query(
-                `INSERT INTO registration (first_name, last_name, email, password, profile_pic, hobbies) 
-            VALUES ('${firstname}', '${lastname}', '${email}', '${hashedPassword}', '${profile}','${hobbies}')`,
+                `INSERT INTO users (first_name, last_name, email, password, gender, profile_pic, hobbies) 
+            VALUES ('${firstname}', '${lastname}', '${email}', '${hashedPassword}','${gender}', '${profilePicture}','${hobbies}')`,
                 { type: QueryTypes.INSERT }
             );
 
@@ -57,22 +57,28 @@ const Registration = async (req, res) => {
 
 const LogIn = async (req, res) => {
     const { email, password } = req.body;
+
+    console.log("Email:", email);
     // console.log(req.body);
     try {
-        console.log(email);
+
         // if (!email || !password) {
         //     return res.status(400).json({ error: "Missing required fields" });
         // }
+
 
         const existingUser = await sequelize.query(
             `SELECT email, password FROM users WHERE email = '${email}'`,
             { type: QueryTypes.SELECT }
         );
 
+        console.log("existingUser:", existingUser);
+
         // if (existingUser.length === 0) {
         //     return res.status(400).json({ error: "Email not found" });
         // }
 
+        // console.log(password)
         const passwordMatch = await bcrypt.compare(
             password,
             existingUser[0].password
@@ -89,7 +95,7 @@ const LogIn = async (req, res) => {
                 message: "Login successful",
                 token: token,
             });
-            
+
         }
     } catch (err) {
         console.error(err);
@@ -97,7 +103,6 @@ const LogIn = async (req, res) => {
     }
 
 };
-
 
 module.exports = {
     Registration,

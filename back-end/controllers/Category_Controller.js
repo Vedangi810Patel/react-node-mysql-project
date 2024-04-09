@@ -1,97 +1,92 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require("../configs/dbConfig");
 
-const createBook = async (req, res) => {
+const createCategory = async (req, res) => {
     try {
-        const { book_id, title, book_description, publish_year, quantity_available } = req.body;
+        const { category, created_by } = req.body;
 
         // Check if all required fields are present
-        if (!book_id || !title || !book_description || !publish_year || !quantity_available) {
+        if (!category || !created_by) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         // Check if email is already registered
-        const existingBook = await sequelize.query(
-            `SELECT title FROM books WHERE title = '${title}'`,
+        const existingCategory = await sequelize.query(
+            `SELECT category FROM categories WHERE category = '${category}'`,
             { type: QueryTypes.SELECT }
         );
 
-        if (existingBook.length > 0) {
-            return res.status(400).json({ error: "Book already exists" });
+        if (existingCategory.length > 0) {
+            return res.status(400).json({ error: "Category already exists" });
         }
 
         await sequelize.query(
-            `INSERT INTO books (book_id, title, book_description, publish_year, quantity_available) 
-            VALUES (${book_id}, '${title}', '${book_description}', ${publish_year}, ${quantity_available})`,
+            `INSERT INTO categories (category, created_by) 
+            VALUES ('${category}', ${created_by})`,
             { type: QueryTypes.INSERT }
         );
-        res.status(200).json({ message: "Book Added successfully" });
+        res.status(200).json({ message: "Category Added successfully" });
     } catch (error) {
-        console.error("Error adding Book:", error);
+        console.error("Error adding Category:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
-const fetchAllBooks = async (req, res) => {
+const fetchAllCategory = async (req, res) => {
     try {
-        const users = await sequelize.query(
-            `SELECT * from books`, { type: QueryTypes.SELECT }
+        console.log("Fetch")
+        const category = await sequelize.query(
+            `SELECT * from categories`, { type: QueryTypes.SELECT }
         );
 
-        res.status(200).json(users);
+        res.status(200).json(category);
     } catch (err) {
         console.error("Unable to Fetch :", err);
     }
 };
 
 
-const getBookByTitle = async (req, res) => {
-    const { title } = req.body;
+const getCategoryByName = async (req, res) => {
+    const { category } = req.body;
     try {
         const result = await sequelize.query(
-            `SELECT * FROM books WHERE title = '${title}'`, { type: QueryTypes.SELECT }
+            `SELECT * FROM categories WHERE category = '${category}'`, { type: QueryTypes.SELECT }
         );
-        res.status(200).json({
-            data: result,
-        });
+        res.status(200).json(result);
     } catch (error) {
         console.log("Error Detected", error);
     }
 };
 
 
-const updateBook = async (req, res) => {
+const updateCategory = async (req, res) => {
     const {
-        book_id,
-        title,
-        book_description,
-        publish_year,
-        quantity_available,
+        category_id,
+        category,
+        created_by
     } = req.body;
 
-    if (!book_id || !title || !book_description || !publish_year || !quantity_available) {
+    if (!category_id || !category || !created_by) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
         await sequelize.query(
-            `UPDATE books SET 
-            book_id = ${book_id},
-            title = '${title}',
-            book_description = '${book_description}',
-            publish_year = '${publish_year}',
-            quantity_available = '${quantity_available}' 
-            WHERE book_id = ${book_id}`,
+            `UPDATE categories SET 
+            category_id = ${category_id},
+            category = '${category}',
+            created_by = ${created_by},
+            WHERE category_id = ${category_id}`,
             { type: QueryTypes.UPDATE }
         );
-        res.status(200).json({ message: "Book updated successfully" });
+        res.status(200).json({ message: "Category updated successfully" });
         // res.status(200).json(res.send("Book Updated Sucessfully !"));
     } catch (error) {
-        console.error("Error adding user:", error);
+        console.error("Error Uupdating Category:", error);
     }
 };
 
-const deleteBook = async (req, res) => {
+const deleteCategory = async (req, res) => {
     const { book_id } = req.body;
 
     try {
@@ -113,9 +108,9 @@ const deleteBook = async (req, res) => {
 
 
 module.exports = {
-    createBook,
-    fetchAllBooks,
-    getBookByTitle,
-    updateBook,
-    deleteBook
+    createCategory,
+    fetchAllCategory,
+    getCategoryByName,
+    updateCategory,
+    deleteCategory
 }

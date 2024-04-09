@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 
 const storageConfig = multer.diskStorage({
-  destination: "./public/assets/profile_pictures",
+  destination: "./public/assets",
   filename: function (request, uploadedFile, callback) {
     callback(
       null,
