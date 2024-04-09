@@ -3,23 +3,35 @@ const sequelize = require("../configs/dbConfig");
 
 const createProduct = async (req, res) => {
     try {
-        const { product_name, product_description, price } = req.body;
+        const { product_name, product_description, price, category_id } = req.body;
+        const product_images = req.files;
         const createdBy = req.user.user_id;
+        console.log(re.body);
+        console.log(product_images);
         console.log(createdBy);
 
          // Check if all required fields are present
-        if (!category) {
+        if (!product_name || !product_description || !price || !product_images || !category_id) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        // Check if email is already registered
+
+        // Check if category is already registered
         const existingCategory = await sequelize.query(
-            `SELECT category FROM categories WHERE category = '${category}'`,
+            `SELECT category FROM categories WHERE category_id = '${category_id}' and created_by = ${createdBy}`,
             { type: QueryTypes.SELECT }
         );
 
         if (existingCategory.length > 0) {
+            console.log(existingCategory)
             return res.status(400).json({ error: "Category already exists" });
+        }
+
+        if(!existingCategory) {
+            await sequelize.query(
+                `INSERT INTO categories (category, created_by) VALUES('${existingCategory}', ${createdBy})`,
+                { type: QueryTypes.INSERT}
+            );
         }
 
         await sequelize.query(

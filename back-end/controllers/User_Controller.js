@@ -1,6 +1,6 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../configs/dbConfig');
-const profilepictureauthenticate = require('../middleware/ImageMiddlewareAuthentication')
+const imageController = require('../middleware/ImageMiddlewareAuthentication')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "user"
@@ -9,7 +9,7 @@ const SECRET_KEY = "user"
 const Registration = async (req, res) => {
     console.log(req.body);
     try {
-        await profilepictureauthenticate(req, res, async (err) => {
+        await imageController.profilePictureAuthenticate(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({ error: err });
             }

@@ -1,0 +1,110 @@
+.Toastify__toast-container {
+    width: auto;
+    max-width: unset;
+}
+
+.Toastify__toast {
+    white-space: nowrap;
+}
+
+.log-container {
+    width: 30%;
+    margin: 15px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #98b98a;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    height: auto;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+}
+
+.form input {
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+    color: black;
+}
+
+h2 {
+    color: black;
+    padding: 5px;
+    margin: 5px;
+}
+
+.form .submit {
+    padding: 14px 24px;
+    margin-top: 5px;
+    background-color: #367644;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.form button:hover {
+    background-color: #4bd575;
+}
+
+.form button:focus {
+    outline: none;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    /* Use flexbox */
+}
+
+li {
+    margin-right: 12%;
+    margin-left: 12%;
+    /* Add some spacing between buttons */
+}
+
+.link {
+    padding: 10px 20px;
+    /* Adjust padding as needed */
+    background-color: #34669b;
+    /* Button background color */
+    /* color: #ffffff; */
+    /* Text color */
+    border: none;
+    cursor: pointer;
+
+}
+
+.link:hover {
+    background-color: #0056b3;
+    /* Change background color on hover */
+}
+
+.log-container .navigation {
+    width: auto;
+    /* padding: 0px 0px; */
+    /* margin-top: 5px; */
+    font-weight: bold;
+    background-color: #98b98a;
+    color: #0056b3;
+    border-color: none;
+    border: none;
+    /* border-radius: 5px; */
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
