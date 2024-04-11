@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// import UpdateForm from './UpdateForm';
-import "react-toastify";
+import UpdateCategoryForm from '../UpdateCategory/UpdateCategoryForm';
+// import {toast} from "react-toastify";
 
 function CategoryCrud() {
   const [categories, setCategories] = useState([]);
@@ -50,16 +50,17 @@ function CategoryCrud() {
 
   const handleUpdateSubmit = (updatedData) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:5000/updateBook");
+    xhr.open("PUT", "http://localhost:5000/UpdateCategory");
     // xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader("Authentication", token);
+    xhr.setRequestHeader("Authentication", `Bearer ${token}`);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           const data = JSON.parse(xhr.responseText);
+          setCategories(categories);
           console.log("Update response:", data);
           setShowPopup(false);
-          toast.success("Book Data Updated Successfully !");
+          toast.success("Category Data Updated Successfully !");
         } else {
           // console.log('Error updating book:', xhr.statusText);
           toast.error("Unable to Update the Data !");
@@ -73,37 +74,37 @@ function CategoryCrud() {
     setShowPopup(false);
   };
 
-  const handleDelete = async (book) => {
+  const handleDelete = async (category) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (confirmDelete) {
       try {
         const xhr = new XMLHttpRequest();
-        xhr.open("DELETE", "http://localhost:5000/deleteBook");
-        xhr.setRequestHeader();
+        xhr.open("DELETE", "http://localhost:5000/DeleteCategory");
+        xhr.setRequestHeader("Authentication", `Bearer ${token}`);
         xhr.onreadystatechange = function () {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               // console.log('Book deleted successfully.');
               toast.success("Book deleted successfully!");
-              setCategories((prevBooks) =>
-                prevBooks.filter((b) => b.book_id !== book.book_id)
+              setCategories((prevCategories) =>
+                prevCategories.filter((c) => c.category_id !== category.category_id)
               );
             } else {
-              console.error("Failed to delete book:", xhr.statusText);
+              console.error("Failed to delete category:", xhr.statusText);
               toast.error("An error occurred while deleting the book.");
             }
           }
         };
-        xhr.send(JSON.stringify({ book_id: book.book_id }));
+        xhr.send(JSON.stringify({ category_id: category.category_id }));
       } catch (error) {
-        console.error("Error deleting book:", error);
+        console.error("Error deleting category:", error);
       }
     }
   };
 
-  const indexOfLastBook = currentPage * categoriessPerPage;
-  const indexOfFirstBook = indexOfLastBook - categoriessPerPage;
-  const currentBooks = categories.slice(indexOfFirstBook, indexOfLastBook);
+  const indexOfLastCategory = currentPage * categoriessPerPage;
+  const indexOfFirstCategory = indexOfLastCategory - categoriessPerPage;
+  const currentCategoriess = categories.slice(indexOfFirstCategory, indexOfLastCategory);
 
   const totalPages = Math.ceil(categories.length / categoriessPerPage);
 
@@ -126,7 +127,7 @@ function CategoryCrud() {
             {" "}
             <Link to={"/insertBooks"}>
               {" "}
-              <button className="link"> Insert Book </button>{" "}
+              <button className="link"> Insert Category </button>{" "}
             </Link>{" "}
           </li>{" "}
           <br />
@@ -152,7 +153,7 @@ function CategoryCrud() {
           </tr>
         </thead>
         <tbody>
-          {currentBooks.map((category, index) => (
+          {currentCategoriess.map((category, index) => (
             <tr key={index}>
               <td>{category.category_id}</td>
               <td>{category.category}</td>
@@ -198,7 +199,7 @@ function CategoryCrud() {
       {showPopup && (
         <div className="popup-container">
           <div className="popup">
-            {/* <UpdateForm book={selectedBook} onUpdate={handleUpdateSubmit} onCancel={handleCancel} /> */}
+            <UpdateCategoryForm category={selectedCategory} onUpdate={handleUpdateSubmit} onCancel={handleCancel} />
           </div>
         </div>
       )}
