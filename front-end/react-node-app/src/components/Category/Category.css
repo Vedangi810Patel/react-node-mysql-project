@@ -25,7 +25,7 @@
 }
 
 .table-container th {
-    background-color: #548285;
+    background-color: #98b98a;
     text-align: center;
     font-weight: bold;
 }
@@ -57,7 +57,7 @@ button.update {
 }
 
 button.delete {
-    background-color: #f44336;
+    background-color: #ca5149;
     color: white;
 }
 
