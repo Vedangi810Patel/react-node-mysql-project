@@ -3,70 +3,80 @@ const sequelize = require("../configs/dbConfig");
 const ImagesController = require('../middleware/ImageMiddlewareAuthentication');
 
 const createProduct = async (req, res) => {
-
     try {
         await ImagesController.productImagesAuthentication(req, res, async function (err) {
             if (err) {
                 return res.status(400).json({ error: err });
             }
 
-            if (!req.file) {
+            if (!req.files) {
                 return res.status(400).json({ error: "Error: No File Selected!" });
             }
 
-            const { product_name, product_description, category_name, price } = req.body;
-            console.log(product_description)
+            const { product_name, product_description, category_name, price } =
+                req.body;
+
             // const created_by = req.user.user_id;
             const createdBy = req.user.user_id;
-            console.log(req.user)
-            console.log(req.file.filename)
-            const product_images = req.file.filename;
-            console.log(product_images)
+
+            const product_images = req.files
+                ? req.files.map((file) => file.filename)
+                : null;
+
+            if (!product_name || !product_description || !category_name || !price) {
+                return res.status(400).json({ error: "Missing required fields" });
+            }
+
             const [category] = await sequelize.query(
-                `SELECT category_id FROM categories WHERE category = '${category_name}' AND created_by = ${createdBy}`,
-                {
-                    // replacements: { category_name, createdBy },
-                    type: QueryTypes.SELECT,
-                }
+                `SELECT * FROM categories WHERE category = '${category_name}' AND created_by = ${createdBy}`,
+                { type: QueryTypes.SELECT }
             );
+
+            console.log(category);
 
             let category_id = category?.category_id;
 
             if (!category_id) {
-                // Create new category if not found
-                await sequelize
-                    .query(
-                        `INSERT INTO categories (category, created_by) VALUES (:category_name, :created_by)`,
-                        {
-                            replacements: { category_name, createdBy },
-                            type: QueryTypes.INSERT,
-                        }
-                    )
-                    .then(([results, metadata]) => {
-                        category_id = metadata.lastInsertId;
-                    });
+                await sequelize.query(
+                    `Insert into categories(category, created_by) Values('${category_name}', ${createdBy})`,
+                    { type: QueryTypes.INSERT }
+                );
+
+                const [newCategory] = await sequelize.query(
+                    `SELECT * FROM categories WHERE category = '${category_name}' AND created_by = ${createdBy}`,
+                    { type: QueryTypes.SELECT }
+                );
+
+                category_id = newCategory?.category_id;
+
                 // .catch((err) => {console.error("Error adding user:", err);})
             }
 
             try {
-                await sequelize.query(`Insert into products (product_name, product_description, price, product_images, category_id, created_by) 
-                Values ('${product_name}','${product_description}',${price}, '${product_images}', ${category_id}, ${createdBy})`,
-                    { type: QueryTypes.INSERT });
+                await sequelize.query(
+                    `Insert into products (product_name, product_description, price, product_images, category_id, created_by) 
+                  Values ('${product_name}','${product_description}',${price}, :product_images, ${category_id}, ${createdBy})`,
+
+                    {
+                        replacements: {
+                            product_images: JSON.stringify(product_images),
+                            type: QueryTypes.INSERT,
+                        },
+                    }
+                );
 
                 res.status(200).json({ message: "Product added successfully" });
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Error adding Product:", error);
                 res.status(500).json({ error: "Internal Server Error" });
             }
-        });
-    }
-    catch (error) {
+        }
+        );
+    } catch (error) {
         console.error("Error adding Product:", error);
         res.status(500).json({ error: "Internal Server Error" });
-    };
-
-}
+    }
+};
 
 const fetchAllProduct = async (req, res) => {
     try {
@@ -140,56 +150,84 @@ const getProductByName = async (req, res) => {
 
 
 const updateProduct = async (req, res) => {
-
     try {
+        await ImagesController.productImagesAuthentication(
+            req,
+            res,
+            async function (err) {
+                if (err) {
+                    return res.status(400).json({ error: err });
+                }
 
-        await ImagesController.productImagesAuthentication(req, res, async function (err) {
-            if (err) {
-                return res.status(400).json({ error: err });
+                if (!req.files) {
+                    console.log(req.files)
+                    return res.status(400).json({ error: "Error: No File Selected!" });
+                }
+
+                const {
+                    product_id,
+                    product_name,
+                    product_description,
+                    price,
+                    category_name,
+                } = req.body;
+                // console.log(req.file.filename);
+                const product_images = req.files
+                    ? req.files.map((file) => file.filename)
+                    : null;
+                const createdBy = req.user.user_id;
+                const userRole = req.user.user_role;
+
+                if (
+                    !product_id ||
+                    !product_name ||
+                    !product_description ||
+                    !price ||
+                    !category_name
+                ) {
+                    return res.status(400).json({ error: "Missing required fields" });
+                }
+
+                const [category] = await sequelize.query(
+                    `SELECT * FROM categories WHERE category = '${category_name}'`,
+                    { type: QueryTypes.SELECT }
+                );
+
+                console.log(category);
+
+                let category_id = category?.category_id;
+
+                // console.log(category);
+
+                if (!category) {
+                    return res.status(404).json({ message: "Category not found" });
+                }
+
+                const [product] = await sequelize.query(
+                    `SELECT * FROM products WHERE product_id = ${product_id}`,
+                    { type: QueryTypes.SELECT }
+                );
+
+                if (product.length === 0) {
+                    return res.status(404).json({ error: "Product not found" });
+                }
+
+                if (userRole !== 1 && product.created_by !== createdBy) {
+                    return res.status(403).json({ message: "Not Authorized" });
+                }
+
+                await sequelize.query(
+                    `UPDATE products SET product_name = '${product_name}', product_description = :product_images, price = ${price}, product_images = '${product_images}', category_id = ${category_id} WHERE product_id = ${product_id} AND created_by = ${createdBy}`,
+                    {
+                        replacements: {
+                            product_images: JSON.stringify(product_images),
+                            type: QueryTypes.UPDATE,
+                        },
+                    }
+                );
+                res.status(200).json({ message: "Product updated successfully" });
             }
-
-            if (!req.file) {
-                return res.status(400).json({ error: "Error: No File Selected!" });
-            }
-
-            const { product_id, product_name, product_description, price, category_name } = req.body;
-            console.log(req.file.filename);
-            const product_images = req.file.filename;
-            const createdBy = req.user.user_id;
-            const userRole = req.user.user_role;
-
-
-            if (!product_id || !product_name || !product_description || !price || !category_name) {
-                return res.status(400).json({ error: "Missing required fields" });
-            }
-
-            const [category] = await sequelize.query(
-                `SELECT * FROM categories WHERE category = '${category_name}'`,
-                { type: QueryTypes.SELECT }
-            );
-
-            console.log(category);
-
-            let category_id = category?.category_id;
-
-            // console.log(category);
-
-            if (category.length === 0) {
-                return res.status(404).json({ message: "Category not found" });
-            }
-
-            if (userRole !== 1 && category[0].created_By !== createdBy) {
-                return res.status(403).json({ message: "Not Authorized" });
-            }
-
-            await sequelize.query(
-                `UPDATE categories SET product_name = '${product_name}', product_description = '${product_description}', proce = ${price}, product_images = '${product_images}' , category_id = ${category_id}, created_by = ${createdBy}
-                WHERE product_id = ${product_id}`,
-                { type: QueryTypes.UPDATE }
-            );
-            res.status(200).json({ message: "Product updated successfully" });
-            // res.status(200).json(res.send("Book Updated Sucessfully !"));
-        });
+        );
     } catch (error) {
         console.error("Error Updating Category:", error);
     }
@@ -214,7 +252,7 @@ const deleteProduct = async (req, res) => {
             });
         }
 
-        if (userRole !== 1 && product[0].created_By !== createdBy) {
+        if (userRole !== 1 && product[0].created_by !== createdBy) {
             return res.status(403).json({ message: "Not Authorized" });
         }
 

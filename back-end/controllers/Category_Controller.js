@@ -8,7 +8,7 @@ const createCategory = async (req, res) => {
         const createdBy = req.user.user_id;
         console.log(createdBy);
 
-         // Check if all required fields are present
+        // Check if all required fields are present
         if (!category) {
             return res.status(400).json({ error: "Missing required fields" });
         }
@@ -42,15 +42,15 @@ const fetchAllCategory = async (req, res) => {
         const userRole = req.user.user_role;
         let categoryData;
 
-        if(userRole === 1) {
+        if (userRole === 1) {
             categoryData = await sequelize.query(
-                `SELECT * FROM categories`, 
+                `SELECT * FROM categories`,
                 { type: QueryTypes.SELECT }
             );
         } else {
             categoryData = await sequelize.query(
                 `SELECT * from categories where created_by = ${createdBy}`,
-                {type: QueryTypes.SELECT}
+                { type: QueryTypes.SELECT }
             );
         }
 
@@ -58,7 +58,7 @@ const fetchAllCategory = async (req, res) => {
         //     `SELECT * from categories`, { type: QueryTypes.SELECT }
         // );
 
-        if(!categoryData.length) {
+        if (!categoryData.length) {
             return res.status(404).json({
                 message: "No Category Found"
             });
@@ -74,29 +74,29 @@ const fetchAllCategory = async (req, res) => {
 const getCategoryByName = async (req, res) => {
     const { category } = req.body;
     try {
-    //     const result = await sequelize.query(
-    //         `SELECT * FROM categories WHERE category = '${category}'`, { type: QueryTypes.SELECT }
-    //     );
-    //     res.status(200).json(result);
-    // } catch (error) {
-    //     console.log("Error Detected", error);
-    // }
+        //     const result = await sequelize.query(
+        //         `SELECT * FROM categories WHERE category = '${category}'`, { type: QueryTypes.SELECT }
+        //     );
+        //     res.status(200).json(result);
+        // } catch (error) {
+        //     console.log("Error Detected", error);
+        // }
         const createdBy = req.user.user_id;
         const userRole = req.user.user_role;
         let categoryData;
 
-        if(userRole === 1) {
+        if (userRole === 1) {
             categoryData = await sequelize.query(
-                `SELECT * FROM categories where category = '${category}'`, 
+                `SELECT * FROM categories where category = '${category}'`,
                 { type: QueryTypes.SELECT }
             );
         } else {
             categoryData = await sequelize.query(
                 `SELECT * from categories where created_by = ${createdBy} and category = '${category}'`,
-                {type: QueryTypes.SELECT}
+                { type: QueryTypes.SELECT }
             );
         }
-        if(categoryData.length === 0) {
+        if (categoryData.length === 0) {
             return res.status(404).json({ error: "Category not found" });
         }
         res.status(200).json(categoryData);
@@ -111,7 +111,7 @@ const updateCategory = async (req, res) => {
     const createdBy = req.user.user_id;
     const userRole = req.user.user_role;
 
-    if (!category_id || !categoryName ) {
+    if (!category_id || !categoryName) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 

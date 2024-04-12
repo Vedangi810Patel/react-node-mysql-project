@@ -104,7 +104,7 @@ const productImagesAuthentication = multer({
     checkFileType(file, callback);
   },
 
-}).single("product_images"); 
+}).array("product_images"); 
 
 
 function checkFileType(uploadedFile, callback) {

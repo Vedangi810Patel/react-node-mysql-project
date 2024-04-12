@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './UpdateCategoryForm.css';
+import './UpdateProductForm.css';
 
 function UpdateCategoryForm({ category, onUpdate, onCancel }) {
     const [formData, setFormData] = useState({

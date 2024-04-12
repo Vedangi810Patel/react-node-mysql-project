@@ -6,6 +6,7 @@ const Routes = express.Router();
 const UserController = require('../controllers/User_Controller');
 // const UserLogIn = require('../controllers/LogIn_Controller');
 const CategoryController = require('../controllers/Category_Controller');
+// const ProductController = require('../controllers/Product_Controller');
 const ProductController = require('../controllers/Product_Controller');
 
 Routes.post('/Registration', UserController.Registration);

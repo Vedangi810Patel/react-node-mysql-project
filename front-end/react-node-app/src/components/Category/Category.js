@@ -43,27 +43,27 @@ function CategoryCrud() {
     xhr.send();
   }, [showPopup]);
 
-  const handleUpdate = (book) => {
-    setSelectedCategory(book);
+
+  const handleUpdate = (category) => {
+    setSelectedCategory(category);
     setShowPopup(true);
   };
 
   const handleUpdateSubmit = (updatedData) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("PUT", "http://localhost:5000/UpdateCategory");
+    xhr.open('PUT', 'http://localhost:5000/UpdateCategory');
     // xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader("Authentication", `Bearer ${token}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           const data = JSON.parse(xhr.responseText);
-          setCategories(categories);
           console.log("Update response:", data);
           setShowPopup(false);
-          toast.success("Category Data Updated Successfully !");
+          toast.success('Category Data Updated Successfully !');
         } else {
-          // console.log('Error updating book:', xhr.statusText);
-          toast.error("Unable to Update the Data !");
+          console.error('Error updating category:', xhr.statusText);
+          toast.error('Unable to Update the Data !');
         }
       }
     };
@@ -85,7 +85,7 @@ function CategoryCrud() {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
               // console.log('Book deleted successfully.');
-              toast.success("Book deleted successfully!");
+              toast.success("Category deleted successfully!");
               setCategories((prevCategories) =>
                 prevCategories.filter((c) => c.category_id !== category.category_id)
               );
@@ -124,20 +124,11 @@ function CategoryCrud() {
       <div className="nav">
         <ul>
           <li>
-            {" "}
-            <Link to={"/insertBooks"}>
-              {" "}
+            <Link to={"/AddCategory"}>
               <button className="link"> Insert Category </button>{" "}
-            </Link>{" "}
-          </li>{" "}
-          <br />
-          <li>
-            {" "}
-            <Link to={"/"}>
-              {" "}
-              <button className="link"> Home Page </button>{" "}
-            </Link>{" "}
+            </Link>
           </li>
+          <br />
         </ul>
       </div>
       <table className="table-container">
@@ -160,12 +151,12 @@ function CategoryCrud() {
               <td>{category.created_by}</td>
               {/* <td>{book.publish_year}</td>
                             <td>{book.quantity_available}</td> */}
-              <td> 
-                <button className="update" onClick={() => handleUpdate(category)} >
+              <td>
+                <button className="update" onClick={() => handleUpdate(category)}>
                   Update
                 </button>
               </td>
-              <td> 
+              <td>
                 <button className="delete" onClick={() => handleDelete(category)} >
                   Delete
                 </button>
