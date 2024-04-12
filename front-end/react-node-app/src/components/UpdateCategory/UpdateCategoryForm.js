@@ -4,7 +4,7 @@ import './UpdateCategoryForm.css';
 function UpdateCategoryForm({ category, onUpdate, onCancel }) {
     const [formData, setFormData] = useState({
         category_id: category.category_id,
-        catgoryName: category.category,
+        catgory_name: category.category,
         createdBy: category.created_by,
     });
 
@@ -25,9 +25,9 @@ function UpdateCategoryForm({ category, onUpdate, onCancel }) {
         <div className="update-form">
             <h3> Update Category Details </h3>
             <form onSubmit={handleSubmit}>
-                <input type="number" name="category_id" value={formData.category_id} onChange={handleChange} placeholder="Category Id" disabled='true' />
-                <input type="text" name="category" value={formData.catgoryName} onChange={handleChange} placeholder="catgory" />
-                <input type="text" name="createdBy" value={formData.createdBy} onChange={handleChange} placeholder="createdBy" disabled='true' />
+                <input type="number" name="category_id" value={formData.category_id} onChange={handleChange} placeholder="Category Id" disabled={true} />
+                <input type="text" name="category" value={formData.catgory_name} onChange={handleChange} placeholder="catgory" />
+                <input type="number" name="createdBy" value={formData.createdBy} onChange={handleChange} placeholder="createdBy" disabled={true} />
                 <div className="form-buttons">
                     <button className="submit" type="submit">Submit</button>
                     <button className="cancel" type="button" onClick={handleCancel}>Cancel</button>

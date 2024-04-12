@@ -1,0 +1,19 @@
+email has to be sent to the client using cron 1(node-cron) jobs every one hour static
+email count : no of email sent
+
+node mailer
+
+
+front end form for 
+email
+title 
+any file 
+send : sent email to submitted email id
+
+validation : file size < 2mb
+excel, pdf : < 5 6 mb
+image : jpeg jpg png
+
+
+
+

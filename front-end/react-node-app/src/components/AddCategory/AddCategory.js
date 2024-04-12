@@ -19,8 +19,9 @@ const AddCategory = ({ }) => {
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'http://localhost:5000/AddCategory', true);
-        // xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Authentication', `Bearer ${token}`)
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+        xhr.send(JSON.stringify({category: formData.category_name}));
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
@@ -34,7 +35,7 @@ const AddCategory = ({ }) => {
                 }
             }
         };
-        xhr.send(JSON.stringify(formData));
+        
     };
 
     return (

@@ -1,7 +1,7 @@
 import './App.css';
 import logo from './logo.svg';
 import {ToastContainer} from 'react-toastify'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LogIn from './components/LogIn/LogIn';
 import Registration from './components/Registration/Registration';
 import CategoryCrud from './components/Category/Category';
@@ -15,17 +15,17 @@ function App() {
       {/* <header className="App-header"> */}
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <ToastContainer />
-        <BrowserRouter>
+        <Router>
           <Routes>
             {/* <Route path='/' element={<Home />} /> */}
             <Route path='/Registration' element={<Registration />}/>
-            <Route path='/LogIn' element={<LogIn/>} />
+            <Route path='/' element={<LogIn/>} />
             <Route path='/AllCategory' element={<CategoryCrud />} />
             <Route path='/AddCategory' element={<AddCategory />} />
             <Route path='/AllProduct' element={<ProductCrud />} />
-            <Route paht='/AddProduct' element={<AddProduct />} />
+            <Route path='/AddProduct' element={<AddProduct />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
       {/* </header> */}
     </div>
   );

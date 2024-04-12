@@ -6,7 +6,7 @@ const createCategory = async (req, res) => {
         const { category } = req.body;
         // console.log(req.users.user_id);
         const createdBy = req.user.user_id;
-        console.log(createdBy);
+        console.log(category);
 
         // Check if all required fields are present
         if (!category) {

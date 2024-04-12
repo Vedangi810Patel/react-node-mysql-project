@@ -59,6 +59,7 @@ function ProductCrud() {
                 if (xhr.status === 200) {
                     const data = JSON.parse(xhr.responseText);
                     console.log("Update response:", data);
+                    xhr.send(JSON.stringify(updatedData));
                     setShowPopup(false);
                     toast.success('Category Data Updated Successfully !');
                 } else {
@@ -67,14 +68,13 @@ function ProductCrud() {
                 }
             }
         };
-        xhr.send(JSON.stringify(updatedData));
     };
 
     const handleCancel = () => {
         setShowPopup(false);
     };
 
-    const handleDelete = async (category) => {
+    const handleDelete = async (product) => {
         const confirmDelete = window.confirm("Are you sure you want to delete?");
         if (confirmDelete) {
             try {
@@ -87,7 +87,7 @@ function ProductCrud() {
                             // console.log('Book deleted successfully.');
                             toast.success("Category deleted successfully!");
                             setCategories((prevCategories) =>
-                                prevCategories.filter((c) => c.category_id !== category.category_id)
+                                prevCategories.filter((p) => p.product_id !== product.product_id)
                             );
                         } else {
                             console.error("Failed to delete category:", xhr.statusText);
@@ -95,7 +95,7 @@ function ProductCrud() {
                         }
                     }
                 };
-                xhr.send(JSON.stringify({ category_id: category.category_id }));
+                xhr.send(JSON.stringify({ product_id : product.product_id }));
             } catch (error) {
                 console.error("Error deleting category:", error);
             }
@@ -126,6 +126,12 @@ function ProductCrud() {
                     <li>
                         <Link to={"/AddProduct"}>
                             <button className="link"> Insert Product </button>
+                        </Link> {" "}
+                        <Link to={"/AllCategory"}>
+                            <button className="link"> All Category </button>
+                        </Link> {" "}
+                        <Link to={"/AddCategory"}>
+                            <button className="link"> Add Category </button>
                         </Link>
                     </li>
                     <br />
@@ -154,7 +160,7 @@ function ProductCrud() {
                             <td>{product.price}</td>
                             <td>{product.product_images}</td>
                             <td>{product.category_id}</td>
-                            <td>{product.crated_by}</td>
+                            <td>{product.created_by}</td>
                             <td>
                                 <button className="update" onClick={() => handleUpdate(product)}>
                                     Update
