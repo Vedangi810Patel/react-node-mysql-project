@@ -1,4 +1,4 @@
-email has to be sent to the client using cron 1(node-cron) jobs every one hour static
+email has to be sent to the client using cron (node-cron) jobs every one hour static
 email count : no of email sent
 
 node mailer
