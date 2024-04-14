@@ -95,7 +95,7 @@ function ProductCrud() {
                         }
                     }
                 };
-                xhr.send(JSON.stringify({ product_id : product.product_id }));
+                xhr.send(JSON.stringify({ product_id: product.product_id }));
             } catch (error) {
                 console.error("Error deleting category:", error);
             }
@@ -142,7 +142,7 @@ function ProductCrud() {
                     <tr>
                         <th>Product Id</th>
                         <th>Product</th>
-                        <th>Description</th>
+                        <th className='description' >Description</th>
                         <th>Price</th>
                         <th>Images</th>
                         <th>Category</th>
@@ -156,9 +156,9 @@ function ProductCrud() {
                         <tr key={index}>
                             <td>{product.product_id}</td>
                             <td>{product.product_name}</td>
-                            <td>{product.product_description}</td>
+                            <td className='description' >{product.product_description}</td>
                             <td>{product.price}</td>
-                            <td>{product.product_images}</td>
+                            <td><img src={`http://localhost:5000/public/assets/productImages/${product.product_}`} alt={'...'} height={'20px'} width={'20px'} /></td>
                             <td>{product.category_id}</td>
                             <td>{product.created_by}</td>
                             <td>
