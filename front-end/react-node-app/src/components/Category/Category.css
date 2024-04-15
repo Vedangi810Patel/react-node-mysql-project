@@ -125,7 +125,7 @@ Button styles .button-container button {
 
 .container {
     margin: 20px;
-    width: 100%;
+    width: 97%;
 }
 
 .table-container {
@@ -146,9 +146,7 @@ Button styles .button-container button {
     font-weight: bold;
 }
 
-.description {
-    width: auto;
-}
+
 
 .table-container tbody tr:hover {
     background-color: #bbb9b9;

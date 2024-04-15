@@ -48,12 +48,6 @@ const AddCategory = ({ }) => {
                 <button className="submit" type="submit">Add Category</button>
                 {/* <button type="button" onClick={onCancel}>Cancel</button> Cancel button */}
             </form>
-            <div>
-                <ul>
-                    <li> <Link to={'/AllCategory'}> <button className="link"> CRUD PAGE </button> </Link> </li> <br />
-                    {/* <li> <Link to={'/'}> <button className='link'> Home Page </button> </Link> </li> */}
-                </ul>
-            </div>
         </div>
     );
 }

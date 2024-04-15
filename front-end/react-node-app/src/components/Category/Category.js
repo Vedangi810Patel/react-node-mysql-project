@@ -121,26 +121,6 @@ function CategoryCrud() {
 
   return (
     <div className="container">
-      <div className="nav">
-        <ul>
-          <li>
-            <Link to={"/AddCategory"}>
-              <button className="link"> Insert Category </button>{" "}
-            </Link>
-          </li>
-          <li>
-            <Link to={"/AddProduct"}>
-              <button className="link"> Insert Product </button>{" "}
-            </Link>
-          </li>
-          <li>
-            <Link to={"/AllProduct"}>
-              <button className="link"> All Product </button>{" "}
-            </Link>
-          </li>
-          <br />
-        </ul>
-      </div>
       <table className="table-container">
         <thead>
           <tr>

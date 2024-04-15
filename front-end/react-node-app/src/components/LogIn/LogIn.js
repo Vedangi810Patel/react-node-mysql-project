@@ -42,7 +42,7 @@ const LogIn = () => {
                         const response = JSON.parse(xhr.responseText);
                         const {token} = response;
                         localStorage.setItem('token', token);
-                        window.location.replace('/AllCategory');
+                        window.location.replace('/AllProduct');
 
                     } else {
                         // console.log(formData)
