@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import './BookCreate.css'; // Adjust the CSS file path if needed
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 
+
 const AddCategory = ({ }) => {
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/");
+            toast.error("Invalid Token!");
+        }
+    }, [token, navigate]);
+
     const [formData, setFormData] = useState({
         category_name: ''
     });
@@ -21,7 +32,7 @@ const AddCategory = ({ }) => {
         xhr.open('POST', 'http://localhost:5000/AddCategory', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-        xhr.send(JSON.stringify({category: formData.category_name}));
+        xhr.send(JSON.stringify({ category: formData.category_name }));
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
@@ -35,7 +46,7 @@ const AddCategory = ({ }) => {
                 }
             }
         };
-        
+
     };
 
     return (

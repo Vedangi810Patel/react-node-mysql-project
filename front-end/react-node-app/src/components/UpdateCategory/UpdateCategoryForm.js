@@ -1,7 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UpdateCategoryForm.css';
+import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 function UpdateCategoryForm({ category, onUpdate, onCancel }) {
+
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+          navigate("/LogIn");
+          toast.error("Invalid Token!");
+        }
+      }, [token, navigate]);
+
     const [formData, setFormData] = useState({
         category_id: category.category_id,
         catgory_name: category.category,

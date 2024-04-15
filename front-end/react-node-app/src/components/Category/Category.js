@@ -19,7 +19,7 @@ function CategoryCrud() {
 
   useEffect(() => {
     if (!token) {
-      navigate("/LogIn");
+      navigate("/");
       toast.error("Invalid Token!");
     }
   }, [token, navigate]);

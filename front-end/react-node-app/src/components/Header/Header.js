@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 // import useHistory from 'react-router-dom';
 import './Header.css';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const token = localStorage.getItem('token');
@@ -17,7 +18,18 @@ const Header = () => {
   };
 
   // Check if token exists
-  if (token) {
+  if (!token) {
+    return (
+      <Navbar className='custom-navbar' variant='dark'>
+        <Container>
+          <Nav className="me-auto">
+          <Nav.Link className='link' href="/"> LogIn </Nav.Link>
+          <Nav.Link className='link' href="/Registration">Registration</Nav.Link>
+          </Nav>
+        </Container>
+      </Navbar>
+    );
+  } else {
     return (
       <Navbar className='custom-navbar' variant='dark'>
         <Container>
@@ -29,17 +41,6 @@ const Header = () => {
             <Nav>
               <Nav.Link onClick={handleLogout}>LogOut</Nav.Link>
             </Nav>
-          </Nav>
-        </Container>
-      </Navbar>
-    );
-  } else {
-    return (
-      <Navbar className='custom-navbar' variant='dark'>
-        <Container>
-          <Nav className="me-auto">
-            <Nav.Link href="/"> LogIn </Nav.Link>
-            <Nav.Link href="/Registration">Registration</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

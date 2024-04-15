@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import './BookCreate.css'; // Adjust the CSS file path if needed
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AddProduct = () => {
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+          navigate("/");
+          toast.error("Invalid Token!");
+        }
+      }, [token, navigate]);
+
     console.log(token)
     const [formData, setFormData] = useState({
         product_name: '',

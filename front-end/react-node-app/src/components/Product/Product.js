@@ -231,7 +231,7 @@ function ProductCrud() {
 
     useEffect(() => {
         if (!token) {
-            navigate("/LogIn");
+            navigate("/");
             toast.error("Invalid Token!");
         }
     }, [token, navigate]);
@@ -281,6 +281,7 @@ function ProductCrud() {
                 toast.success('Product Data Updated Successfully!');
             } else {
                 console.error('Error updating product:', response.statusText);
+                setShowPopup(false);
                 toast.error('Unable to update the product data!');
             }
         } catch (error) {
