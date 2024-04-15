@@ -107,11 +107,11 @@ const getCategoryByName = async (req, res) => {
 
 
 const updateCategory = async (req, res) => {
-    const { category_id, categoryName } = req.body;
+    const { category_id, category_name } = req.body;
     const createdBy = req.user.user_id;
     const userRole = req.user.user_role;
 
-    if (!category_id || !categoryName) {
+    if (!category_id || !category_name) {
         return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -132,7 +132,7 @@ const updateCategory = async (req, res) => {
 
         await sequelize.query(
             `UPDATE categories SET 
-            category = '${categoryName}'
+            category = '${category_name}'
             WHERE category_id = ${category_id}`,
             { type: QueryTypes.UPDATE }
         );
@@ -165,7 +165,7 @@ const deleteCategory = async (req, res) => {
         if (userRole !== 1 && category[0].created_By !== createdBy) {
             return res.status(403).json({ message: "Not Authorized" });
         }
-
+        
         await sequelize.query(
             `DELETE FROM categories WHERE category_id = ${category_id}`,
             { type: QueryTypes.DELETE }

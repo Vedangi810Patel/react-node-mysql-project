@@ -3,7 +3,6 @@ import "./Category.css";
 // import UpdateForm from '../UpdateForm/UpdateForm';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import UpdateCategoryForm from '../UpdateCategory/UpdateCategoryForm';
 // import {toast} from "react-toastify";
@@ -51,13 +50,14 @@ function CategoryCrud() {
 
   const handleUpdateSubmit = (updatedData) => {
     const xhr = new XMLHttpRequest();
+    let data;
     xhr.open('PUT', 'http://localhost:5000/UpdateCategory');
     // xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
-          const data = JSON.parse(xhr.responseText);
+          data = JSON.parse(xhr.responseText);
           console.log("Update response:", data);
           setShowPopup(false);
           toast.success('Category Data Updated Successfully !');
@@ -67,6 +67,7 @@ function CategoryCrud() {
         }
       }
     };
+    console.log(data)
     xhr.send(JSON.stringify(updatedData));
   };
 
@@ -142,7 +143,10 @@ function CategoryCrud() {
               {/* <td>{book.publish_year}</td>
                             <td>{book.quantity_available}</td> */}
               <td>
-                <button className="update" onClick={() => handleUpdate(category)}>
+                <button className="update" onClick={() => {
+                  console.log(category.category_id);
+                  handleUpdate(category)
+                }}>
                   Update
                 </button>
               </td>

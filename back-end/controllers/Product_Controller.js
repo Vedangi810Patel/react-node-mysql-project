@@ -92,9 +92,14 @@ const fetchAllProduct = async (req, res) => {
             );
         } else {
             categoryData = await sequelize.query(
-                `SELECT * from products where created_by = ${createdBy}`,
+                `SELECT p.*, c.category AS category_name 
+                FROM products AS p 
+                LEFT JOIN categories AS c 
+                ON p.category_id = c.category_id 
+                WHERE p.created_by = ${createdBy}`,
                 { type: QueryTypes.SELECT }
             );
+            
         }
 
         // const category = await sequelize.query(
@@ -130,12 +135,12 @@ const getProductByName = async (req, res) => {
 
         if (userRole === 1) {
             categoryData = await sequelize.query(
-                `SELECT * FROM products where product_name = '${product_name}'`,
+                `SELECT p.*, c.category as category_name FROM products as p LEFT JOIN ON categories as c BY p.category_id = c.category_id where product_name = '${product_name}'`,
                 { type: QueryTypes.SELECT }
             );
         } else {
             categoryData = await sequelize.query(
-                `SELECT * from products where created_by = ${createdBy} AND product_name = '${product_name}'`,
+                `SELECT p.*, c.category as category_name FROM products as p LEFT JOIN ON categories as c BY p.category_id = c.category_id where created_by = ${createdBy} AND product_name = '${product_name}'`,
                 { type: QueryTypes.SELECT }
             );
         }
@@ -217,12 +222,12 @@ const updateProduct = async (req, res) => {
                 }
 
                 await sequelize.query(
-                    `UPDATE products SET product_name = '${product_name}', product_description = :product_images, price = ${price}, product_images = '${product_images}', category_id = ${category_id} WHERE product_id = ${product_id} AND created_by = ${createdBy}`,
+                    `UPDATE products SET product_name = '${product_name}', product_description = '${product_description}', price = ${price}, product_images =  :product_images ,category_id = ${category_id} WHERE product_id = ${product_id} AND created_by = ${createdBy}`,
                     {
                         replacements: {
                             product_images: JSON.stringify(product_images),
-                            type: QueryTypes.UPDATE,
                         },
+                        type: QueryTypes.UPDATE,
                     }
                 );
                 res.status(200).json({ message: "Product updated successfully" });

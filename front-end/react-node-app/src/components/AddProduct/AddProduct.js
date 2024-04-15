@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 // import './BookCreate.css'; // Adjust the CSS file path if needed
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const AddProduct = () => {
@@ -59,6 +58,7 @@ const AddProduct = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     toast.success("Product Added Successfully !");
+                    window.location.replace('/AllProduct');
                     setFormData({
                         product_name: '',
                         product_description: '',
@@ -100,14 +100,6 @@ const AddProduct = () => {
                 <button className="submit" type="submit">Add Category</button>
                 {/* <button type="button" onClick={onCancel}>Cancel</button> Cancel button */}
             </form>
-            <div>
-                <ul>
-                    <li> <Link to={'/AllProduct'}> <button className="link"> CRUD PAGE </button> </Link> </li> <br />
-                    <li> <Link to={'/AddCategory'}> <button className='link'> Add Category </button> </Link> </li>
-                    <li> <Link to={'/AllCategory'}> <button className='link'> All Category </button> </Link> </li>
-
-                </ul>
-            </div>
         </div>
     );
 }

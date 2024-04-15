@@ -44,7 +44,7 @@ const Registration = () => {
                     if (xhr.status === 201 || xhr.status === 200) {
                         // alert('Registration Successful!');
                         toast.success('Registration Sucessful !');
-                        window.location.replace('/LogIn');
+                        window.location.replace('/');
                         setFormData({
                             firstname: '',
                             lastname: '',

@@ -216,7 +216,6 @@ import React, { useState, useEffect } from "react";
 import "./Product.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import UpdateProductForm from '../UpdateProduct/UpdateProductForm';
 
@@ -265,14 +264,22 @@ function ProductCrud() {
     };
 
     const handleUpdateSubmit = async (updatedData) => {
+        console.log(updatedData)
+        const formDatas = new FormData();
+        formDatas.append("product_id", updatedData.product_id);
+        formDatas.append("product_name", updatedData.product_name);
+        formDatas.append("product_description", updatedData.product_description);
+        formDatas.append("price", updatedData.price);
+        formDatas.append("product_images", updatedData.product_images);
+        formDatas.append("category_name", updatedData.category_name);
         try {
             const response = await fetch('http://localhost:5000/UpdateProduct', {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'multipart/formdata',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(updatedData)
+                body: formDatas
             });
             if (response.ok) {
                 const data = await response.json();
@@ -281,7 +288,7 @@ function ProductCrud() {
                 toast.success('Product Data Updated Successfully!');
             } else {
                 console.error('Error updating product:', response.statusText);
-                setShowPopup(false);
+                // setShowPopup(false);
                 toast.error('Unable to update the product data!');
             }
         } catch (error) {
@@ -353,34 +360,42 @@ function ProductCrud() {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentProducts.map((product, index) => (
-                        // console.log(product.product_images);
-                        <tr key={index}>
-                            <td>{product.product_id}</td>
-                            <td>{product.product_name}</td>
-                            <td className='description'>{product.product_description}</td>
-                            <td>{product.price}</td>
-                            <td>
-                                {product.product_images.split(',').map((image, i) => (
-                                    <img key={i} src={`http://localhost:5000/public/assets/productImages/${image}`} alt={'...'} height={'20px'} width={'20px'} />
-                                ))}
-                            </td>
-                            <td>{product.category_id}</td>
-                            <td>{product.created_by}</td>
-                            <td>
-                                <button className="update" onClick={() => handleUpdate(product)}>
-                                    Update
-                                </button>
-                            </td>
-                            <td>
-                                <button className="delete" onClick={() => handleDelete(product)} >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                    {currentProducts.map((product, index) => {
+                        const productImages = JSON.parse(product.product_images)
+                        console.log(productImages);
+                        return (
+                            <tr key={index}>
+                                <td>{product.product_id}</td>
+                                <td>{product.product_name}</td>
+                                <td className='description'>{product.product_description}</td>
+                                <td>{product.price}</td>
+                                <td>
+                                    {productImages.map((image, i) => (
+                                        <img key={i} src={`http://localhost:5000/public/assets/productImages/${productImages[i]}`} alt={'...'} height={'50px'} width={'50px'} />
+                                    ))}
+                                </td>
+                                <td>{product.category_name}</td>
+                                <td>{product.created_by}</td>
+                                <td>
+                                    <button className="update" onClick={() => handleUpdate(product)}>
+                                        Update
+                                    </button>
+                                </td>
+                                <td>
+                                    <button className="delete" onClick={() => handleDelete(product)} >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        )
+                    }
+                    )
+                    }
+
+
                 </tbody>
             </table>
+
             <div className="pagination">
                 <button
                     onClick={() => paginate(currentPage - 1)}

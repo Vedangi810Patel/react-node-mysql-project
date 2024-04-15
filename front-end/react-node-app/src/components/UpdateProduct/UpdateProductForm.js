@@ -24,7 +24,7 @@ function UpdateProductForm({ product, onUpdate, onCancel }) {
         product_description: product.product_description,
         price: product.price,
         product_images: product.product_images,
-        category_id: product.category_id,
+        category_name: product.category_name,
         created_by: product.created_by
     });
 
@@ -59,7 +59,7 @@ function UpdateProductForm({ product, onUpdate, onCancel }) {
                 <input type="text" name="product_description" value={formData.product_description} onChange={handleChange} placeholder="product_desciption" />
                 <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="price" />
                 <input type="file" name="product_images" accept='image/*' onChange={fileHandle} placeholder="product_images" />
-                <input type="number" name="category_id" value={formData.category_id} onChange={handleChange} placeholder="category_id" disabled={true} />
+                <input type="text" name="category_id" value={formData.category_name} onChange={handleChange} placeholder="category_name" disabled={true} />
                 <input type="number" name="created_by" value={formData.created_by} onChange={handleChange} placeholder="created_by" disabled={true} />
 
                 <div className="form-buttons">
